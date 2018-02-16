@@ -8,7 +8,7 @@ import os
 BASE_URL = "http://gamli.rvk.is/vefur/owa/{}"
 year_url = "http://gamli.rvk.is/vefur/owa/edutils.parse_page?nafn=BN2MEN{}"
 years = ["96", "97", "98", "99", "00", "01", "02", "03", "04", "05", "06",
-         "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17"]
+         "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18"]
 
 
 def scrape(url):
@@ -51,11 +51,14 @@ def collect_all():
             if not os.path.exists(year):
                 os.makedirs(year)
             filepath = os.path.join(year, filename)
-            with open(filepath, "wb") as f:
-                dict_writer = csv.DictWriter(f, keys)
-                dict_writer.writeheader()
-                dict_writer.writerows(result)
-            print("Sótti {}".format(filepath))
+            if os.path.exists(filepath):
+                print("  {} exists".format(filepath))
+            else:
+                with open(filepath, "wb") as f:
+                    dict_writer = csv.DictWriter(f, keys)
+                    dict_writer.writeheader()
+                    dict_writer.writerows(result)
+                print("  Sótti {}".format(filepath))
         print("------")
         print("Sótti {}".format(year))
 

@@ -8,7 +8,7 @@ import os
 BASE_URL = "http://gamli.rvk.is/vefur/owa/{}"
 year_url = "http://gamli.rvk.is/vefur/owa/edutils.parse_page?nafn=BN2MEN{}"
 years = ["96", "97", "98", "99", "00", "01", "02", "03", "04", "05", "06",
-         "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18"]
+         "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]
 
 
 def scrape(url):

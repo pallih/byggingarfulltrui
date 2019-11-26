@@ -13,19 +13,24 @@ years = ["96", "97", "98", "99", "00", "01", "02", "03", "04", "05", "06",
 
 def scrape(url):
     r = requests.get(url)
-    soup = bs(r.text, "lxml")
+    soup = bs(r.text, "html5lib")
     filename = soup.h2.next_sibling.strip().replace(" ", "_").replace(".", "") + ".csv"
     links = soup.find_all(href=re.compile("edutils.parse_page"))
     result = []
     for link in links:
         data = {}
-        b1 = link.find_previous("b")
-        b2 = b1.find_previous("b")
-        data["nr"] = b2.text.replace("Umsókn nr.", "").strip()
-        data["url"] = BASE_URL.format(link.get('href'))
-        data["heimilisfang"] = link.text
+        for el in link.previous_elements:
+            try:
+                if "Umsókn nr." in el.text:
+                    data['nr'] = el.text.strip().replace('Umsókn nr. ', '')
+                    break
+            except:
+                pass
+        data['skjal_nr'] = link.get('href').split('=')[-1:][0]
+        #data["url"] = BASE_URL.format(link.get('href'))
+        data["heimilisfang"] = link.text.lstrip('">').strip()
         tegund = link.find_next("i")
-        data["tegund"] = tegund.text
+        data["tegund"] = tegund.text.strip()
         text = ""
         for el in tegund.find_next_siblings():
             if el.name == "i":
@@ -35,8 +40,8 @@ def scrape(url):
                     text = text + str(el.next_sibling)
                 except AttributeError:
                     pass
-        data["nidurstada"] = tegund.find_next("i").get_text().strip().replace("\r\r\n", " ")
-        data["spurning"] = (text.strip().replace("\r\r\n", " "))
+        data["nidurstada"] = tegund.find_next("i").get_text(" ", strip=True)
+        data["spurning"] = (text.strip().replace("\n", " "))
         result.append(data)
     return (filename, result)
 
@@ -48,9 +53,9 @@ def collect_all():
         for link in soup.find_all('a'):
             filename, result = scrape(BASE_URL.format(link.get('href')))
             keys = result[0].keys()
-            if not os.path.exists(year):
-                os.makedirs(year)
-            filepath = os.path.join(year, filename)
+            if not os.path.exists('data/' + year):
+                os.makedirs('data/' + year)
+            filepath = os.path.join('data', year, filename)
             if os.path.exists(filepath):
                 print("  {} exists".format(filepath))
             else:
@@ -65,4 +70,3 @@ def collect_all():
 
 if __name__ == '__main__':
     collect_all()
-

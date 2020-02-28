@@ -5,8 +5,8 @@ chardet==3.0.4
 html5lib==1.0.1
 idna==2.6
 lxml==4.4.2
-requests==2.18.4
+requests==2.23.0
 six==1.13.0
 unicodecsv==0.14.1
-urllib3==1.22
+urllib3==1.25.8
 webencodings==0.5.1
